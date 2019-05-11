@@ -1,16 +1,22 @@
 # blog/views.py
 
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from .forms import PostForm
+from .models import Post
 
 def post_new(request):
+    form_cls = PostForm
+    template_name = 'myapp/post_form.html'
+    success_url = '/blog/'
+
     if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
+        form = form_cls(request.POST, request.FILES)
         if form.is_valid():
-            pass
+            post = form.save()
+            return redirect(success_url)
     else:
-        form = PostForm()
+        form = form_cls()
     
-    return render(request, 'blog/post_form.html', {
+    return render(request, template_name, {
         'form': form,
     })
